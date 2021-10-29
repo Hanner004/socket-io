@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const http = require("http");
 const path = require("path");
 
@@ -10,7 +12,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-mongoose.connect('mongodb://localhost/socket-io')
+mongoose.connect(`${process.env.MONGO_URI}`)
   .then(db => console.log("database is connected"))
   .catch(err => console.log(err))
 
