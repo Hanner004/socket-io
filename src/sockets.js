@@ -6,7 +6,7 @@ module.exports = function (io) {
   io.on("connection", async (socket) => {
     // console.log("new user connected");
 
-    let messages = await ChatSchema.find().sort({_id: -1}).limit(10)
+    let messages = await ChatSchema.find().sort({_id: -1}).limit(5)
     messages.reverse()
     socket.emit("load old msgs", messages)
 
