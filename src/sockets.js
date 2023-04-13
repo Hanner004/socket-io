@@ -5,10 +5,9 @@ module.exports = function (io) {
 
   io.on("connection", async (socket) => {
     // console.log("new user connected");
-
-    let messages = await ChatSchema.find().sort({_id: -1}).limit(5)
-    messages.reverse()
-    socket.emit("load old msgs", messages)
+    let messages = await ChatSchema.find().sort({_id: -1}).limit(5);
+    messages.reverse();
+    socket.emit("load old msgs", messages);
 
     socket.on("new user", (data, cb) => {
       // console.log(data)
@@ -34,7 +33,11 @@ module.exports = function (io) {
           if (name in users) {
             users[name].emit("whisper", {
               msg,
-              nick: socket.nickname,
+              nick: `Mensaje privado de ${socket.nickname}`,
+            });
+            socket.emit("whisper", {
+              msg,
+              nick: `Mensaje privado para ${users[name].nickname}`,
             });
           } else {
             cb("Error! Enter a valid User");
@@ -43,12 +46,11 @@ module.exports = function (io) {
           cb("Error! Please enter your message");
         }
       } else {
-
         var newChat = new ChatSchema({
           msg,
-          nick: socket.nickname
-        })
-        await newChat.save()
+          nick: socket.nickname,
+        });
+        await newChat.save();
 
         io.sockets.emit("new message", {
           msg,

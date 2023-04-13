@@ -13,6 +13,8 @@ $(function () {
 
   const $users = $("#usernames");
 
+  const $userActive = $("#userActive"); //new
+
   $nickForm.submit((e) => {
     e.preventDefault();
     socket.emit("new user", $nickname.val(), (data) => {
@@ -20,10 +22,9 @@ $(function () {
         $("#nickWrap").hide();
         $("#contentWrap").show();
       } else {
-        $nickError.html(
-          `<div class="alert alert-danger">Username already exist.</div>`
-        );
+        $nickError.html(`<div class="alert alert-danger">Username already exist.</div>`);
       }
+      $userActive.append($nickname.val());
       $nickname.val("");
     });
   });
@@ -31,8 +32,8 @@ $(function () {
   //events
   $messageForm.submit((e) => {
     e.preventDefault();
-    socket.emit("send message", $messageBox.val(), data => {
-      $chat.append(`<p class="error">${data}</p>`)
+    socket.emit("send message", $messageBox.val(), (data) => {
+      $chat.append(`<p class="error">${data}</p>`);
     });
     $messageBox.val("");
   });
@@ -49,17 +50,17 @@ $(function () {
     $users.html(html);
   });
 
-  socket.on("whisper", data => {
-    $chat.append(`<p class="whisper"><b>${data.nick}: </b>${data.msg}</p>`)
-  })
+  socket.on("whisper", (data) => {
+    $chat.append(`<p class="whisper text-warning"><b>${data.nick}: </b>${data.msg}</p>`);
+  });
 
-  socket.on("load old msgs", msgs => {
+  socket.on("load old msgs", (msgs) => {
     for (let i = 0; i < msgs.length; i++) {
-      displayMsg(msgs[i])
+      displayMsg(msgs[i]);
     }
-  })
+  });
 
   function displayMsg(data) {
-    $chat.append(`<p class="whisper"><b>${data.nick}: </b>${data.msg}</p>`)
+    $chat.append(`<p class="whisper"><b>${data.nick}: </b>${data.msg}</p>`);
   }
 });
